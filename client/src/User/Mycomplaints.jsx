@@ -55,9 +55,9 @@ const Mycomplaints = () => {
   };
 
   return (
-    <div className="px-12 pt-28 min-h-screen">
-      <div className="border-b pb-4 space-y-4">
-        <h1 className="text-4xl">My Complaints</h1>
+    <div className="px-12 mt-10 min-h-screen">
+      <div className="border-b pb-4 text-center space-y-4">
+        <h1 className="text-4xl font-semiboldbold">My Complaints</h1>
         <p>
           View the ongoing and resolved complaints to understand how we address
           user issues effectively.

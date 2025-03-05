@@ -3,8 +3,8 @@ import proof from "../images/proof.jpg";
 
 const About = () => {
   return (
-    <div className="mt-24 mx-15 space-y-10">
-      <h1 className="text-4xl text-center font-bold">Our Mission & Team</h1>
+    <div className="mt-10 mx-15 space-y-10">
+      <h1 className="text-5xl text-center font-bold">Our Mission & Team</h1>
       <p className="text-center">
         At ProofPoint, we strive to empower users with a transparent and
         user-friendly platform. Meet the dedicated <br /> team behind our

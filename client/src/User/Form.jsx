@@ -80,7 +80,7 @@ const Form = () => {
   
 
   return (
-    <div className="pt-7 min-h-screen flex flex-col items-center mt-10 justify-center bg-gray-50 p-4">
+    <div className="py-7 min-h-screen flex flex-col items-center  justify-center bg-gray-50 p-4">
       <div className="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-md">
         <h1 className="text-2xl font-semibold text-center mb-4">
           Report Issues Seamlessly
@@ -101,7 +101,7 @@ const Form = () => {
               value={formData.model}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-lg border-blue-300"
+              className="w-full px-3 py-2 border rounded-lg  border-blue-300"
             >
               <option value="">Select Complaint Model</option>
               {complaintModels.map((option, index) => (
@@ -213,13 +213,13 @@ const Form = () => {
           {/* Proof File Upload */}
           <div>
             <label className="block text-sm font-medium mb-1">Proof</label>
-            <div className="bg-blue-300 rounded-lg">
+            <div className="bg-blue-300 w-full rounded-lg">
               <input
                 type="file"
                 name="proof"
                 onChange={handleChange}
                 accept="image/*, video/*"
-                className="block w-54 m-auto px-3 py-2 rounded-lg"
+                className="block w-full px-3 py-2 rounded-lg"
               />
             </div>
           </div>

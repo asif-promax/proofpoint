@@ -99,7 +99,7 @@ const LandingPage = () => {
                 <div className="text-blue-500 dark:text-purple-400 mb-4">
                   {category.icon}
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">{category.name}</h3>
+                <h3 className="text-2xl text-gray-200 font-semibold mb-2">{category.name}</h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   {`Report ${category.name.toLowerCase()} issues with multimedia evidence`}
                 </p>
@@ -139,7 +139,7 @@ const LandingPage = () => {
       {/* Testimonials Section */}
       <section className="bg-blue-50 dark:bg-gray-700 py-20">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12">Community Voices</h2>
+          <h2 className="text-4xl font-bold text-gray-200 text-center mb-12">Community Voices</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div

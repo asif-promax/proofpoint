@@ -17,7 +17,7 @@ const Navigation = () => {
 
   return (
     <>
-      <div className="fixed w-full top-0 bg-white z-50 py-1 border-b shadow">
+      <div className="sticky top-0 w-full bg-white z-50 py-1 shadow">
         <div className="mx-auto px-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
@@ -89,7 +89,7 @@ const Navigation = () => {
             {/* Complaint Registration Button */}
             <Link to="/landing/profile">
               <p
-                className={`px-3 py-1 rounded-lg cursor-pointer transition duration-300 ${
+                className={`px-3 hidden md:inline-block py-1 rounded-lg cursor-pointer transition duration-300 ${
                   isActive("/landing/profile")
                     ? "bg-blue-400 text-white"
                     : "hover:text-blue-400"
@@ -145,8 +145,8 @@ const Navigation = () => {
                     About
                   </p>
                 </Link>
-                <Link to="/landing/profile">
-                  <p className="rounded-2xl cursor-pointer py-1 hover:bg-blue-400 hover:text-white block w-full text-center transition duration-300">
+                <Link to="/landing/profile"className="w-full" onClick={toggleMenu}>
+                  <p className="rounded-2xl cursor-pointer py-1 hover:bg-blue-400 hover:text-white text-center transition duration-300">
                     Profile
                   </p>
                 </Link>
