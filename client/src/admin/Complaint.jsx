@@ -180,6 +180,7 @@ const Complaint = () => {
       <main className="space-y-4">
         <div className="border-b flex justify-between">
           <h2 className="text-xl font-semibold">User Complaints</h2>
+          <button onClick={() => window.print()} className="text-blue-600">Download</button>
         </div>
 
         {/* Filter Buttons */}
@@ -242,7 +243,7 @@ const Complaint = () => {
                 <td className="border px-1 py-">
                   {complaint.user?.number || "No Phone"}
                 </td>
-                <td className="border px-2 py-2">{complaint.model}</td>
+                <td className="border px-2 py-1">{complaint.model}</td>
                 <td className="border px-2 py-">{complaint.complaintType}</td>
                 <td className="border px-2 py-">
                   {complaint.place} - {complaint.district}

@@ -14,6 +14,7 @@ import ComplaintManagement from "./admin/Complaintmanagment"; // Fixed typo
 import Dashboard from "./admin/Dashboard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AdminControl from "./admin/AdminControl";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -26,7 +27,6 @@ const ProtectedRoute = ({ children }) => {
 
   return children;
 };
-
 
 const AdminRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -62,6 +62,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/reg" element={<Register />} />
+        <Route path="/admin/adminControl" element={<AdminControl />} />
 
         {/* User Routes - Protected */}
         <Route
@@ -76,7 +77,7 @@ const App = () => {
           <Route path="complaint" element={<MyComplaints />} />
           <Route path="about" element={<About />} />
           <Route path="form" element={<Form />} />
-          <Route path="profile" element={<Management/>}/>
+          <Route path="profile" element={<Management />} />
         </Route>
 
         {/* Admin Routes - Protected */}
@@ -99,7 +100,6 @@ const App = () => {
 };
 
 export default App;
-
 
 // const App = () => {
 //   return (

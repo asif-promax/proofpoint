@@ -153,20 +153,6 @@ const Register = () => {
               />
             </div>
 
-            {/* Optional Admin Registration */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold block">Register as</label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option> {/* Only allow for manual approval */}
-              </select>
-            </div>
-
             {/* Submit Button */}
             <div className="space-y-1">
               <button type="submit" className="text-white text-center bg-blue-600 w-full py-2 rounded-lg">

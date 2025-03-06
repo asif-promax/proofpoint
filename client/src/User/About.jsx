@@ -11,7 +11,7 @@ const About = () => {
         success.
       </p>
       <div className="flex flex-col md:flex-row gap-11 ">
-        <h1 className="w-full md:w-2/5 text-3xl font-semibold text-center">
+        <h1 className="w-full underline md:w-2/5 text-3xl font-semibold text-center">
           Our Commitment to Users and Community
         </h1>
         <p className="w-full md:w-3/5 text-justify">

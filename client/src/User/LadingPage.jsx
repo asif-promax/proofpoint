@@ -76,8 +76,8 @@ const LandingPage = () => {
                   <span className="text-white text-2xl">✓</span>
                 </div>
                 <div>
-                  <p className="font-bold">1k+ Resolved</p>
-                  <p className="text-sm text-gray-500">Issues This Month</p>
+                  <p className="font-bold text-gray-100">1k+ Resolved</p>
+                  <p className="text-sm text-gray-300">Issues This Month</p>
                 </div>
               </div>
             </motion.div>

@@ -8,6 +8,7 @@ const complaintControls = require("./controller/complaintControls");
 const complaintForm = require("./controller/complaintRoutes");
 const complaintAdmin = require("./controller/complaintAdmin");
 const updateUsers = require("./controller/updateUser");
+const dashboard=require("./controller/dashboard")
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/complaint", complaintControls);
 app.use("/complaintForm", complaintForm);
 app.use("/allcomplaints", complaintAdmin);
 app.use("/updateUsers", updateUsers);
+app.use("/dashboard",dashboard)
 
 const PORT = process.env.PORT || 5002;
 console.log(PORT);

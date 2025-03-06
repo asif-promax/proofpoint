@@ -16,7 +16,7 @@ const Sidebar = () => {
 
       <aside className="sticky bottom-0 min-h-screen  w-1/5 bg-blue-700 px-3 py-3 rounded-lg">
         <h1
-          className="text-3xl text-center font-semibold"
+          className="text-3xl text-center text-gray-300 font-semibold"
           style={{ fontFamily: "'Sofia', sans-serif" }}
         >
           ProofPoint
