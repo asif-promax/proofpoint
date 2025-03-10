@@ -32,62 +32,92 @@ const Dashboard = () => {
     fetchDashboardStats();
   }, []);
 
+  // Define the metrics array
+  const metrics = [
+    { title: "Total Cases", value: stats.totalCases, icon: "📋" },
+    { title: "Verified Cases", value: stats.verifiedCases, icon: "✅" },
+    { title: "Pending Cases", value: stats.pendingCases, icon: "⏳" },
+    { title: "Rejected Cases", value: stats.rejectedCases, icon: "❌" },
+  ];
+
+  // Define the progress items array
+  const progressItems = [
+    { label: "Verified", value: (stats.verifiedCases / stats.totalCases) * 100 || 0 },
+    { label: "Pending", value: (stats.pendingCases / stats.totalCases) * 100 || 0 },
+    { label: "Rejected", value: (stats.rejectedCases / stats.totalCases) * 100 || 0 },
+  ];
+
   return (
-    <div className="w-4/5 bg-blue-100 px-5 min-h-screen">
-      <div className="flex justify-between border-b py-2 border-white">
-        <p>Overview</p>
-        <button onClick={() => window.print()} className="text-blue-600">Download</button>
+    <div className="flex-1 p-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+        <button
+          onClick={() => window.print()}
+          className="px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+        >
+          Export Report
+        </button>
       </div>
 
-      {/* Top Metrics Cards */}
-      <div className="flex justify-center gap-6 my-5">
-        {[
-          { title: "Total Cases", value: stats.totalCases, icon: "📅" },
-          { title: "Verified Cases", value: stats.verifiedCases, icon: "✅" },
-          { title: "Pending", value: stats.pendingCases, icon: "⏲️" },
-          { title: "Rejected", value: stats.rejectedCases, icon: "🚫" },
-        ].map((item, index) => (
-          <div key={index} className="bg-white shadow-lg rounded-2xl p-5 text-center">
-            <h2 className="text-gray-500">{item.title} {item.icon}</h2>
-            <p className="text-3xl font-bold">{item.value}</p>
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {metrics.map((item, index) => (
+          <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{item.title}</p>
+                <p className="text-3xl font-bold text-gray-800">{item.value}</p>
+              </div>
+              <span className="text-2xl p-3 bg-blue-100 rounded-lg text-blue-600">
+                {item.icon}
+              </span>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Chart and Strongest Topics */}
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white p-5 shadow-lg rounded-2xl">
-          <h3 className="text-lg font-bold mb-4">Activity</h3>
-          <ResponsiveContainer width="100%" height={300} className="text-xs">
-            <BarChart data={stats.activityData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="cases" fill="#3182ce" />
-            </BarChart>
-          </ResponsiveContainer>
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold mb-4">Monthly Activity</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.activityData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip
+                  contentStyle={{
+                    background: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Bar dataKey="cases" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="bg-white p-5 shadow-lg rounded-2xl">
-          <h3 className="text-lg font-bold mb-4">Complaints Progress</h3>
-          <ul>
-            {[
-              { topic: "Solved Complaints", percentage: (stats.verifiedCases / stats.totalCases) * 100 || 0 },
-              { topic: "Pending Complaints", percentage: (stats.pendingCases / stats.totalCases) * 100 || 0 },
-              { topic: "Rejected Complaints", percentage: (stats.rejectedCases / stats.totalCases) * 100 || 0 },
-            ].map((topic, index) => (
-              <li key={index} className="mb-4">
-                <div className="flex justify-between mb-1">
-                  <span>{topic.topic}</span>
-                  <span>{Math.round(topic.percentage)}% </span>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold mb-4">Complaints Distribution</h3>
+          <div className="space-y-6">
+            {progressItems.map((item, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">{item.label}</span>
+                  <span className="font-medium text-gray-700">{item.value.toFixed(2)}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div className="bg-green-500 h-3 rounded-full" style={{ width: `${topic.percentage}%` }} />
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-500"
+                    style={{ width: `${item.value}%` }}
+                  />
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>
