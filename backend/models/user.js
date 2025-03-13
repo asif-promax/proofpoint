@@ -19,11 +19,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role:{
-    type:String,
-    enum:["user","admin"],
-    default:"user",
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
   },
+  resetToken: String,
+  resetTokenExpiration: Date,
 });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

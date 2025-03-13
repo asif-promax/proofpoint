@@ -87,6 +87,7 @@ const Register = () => {
           <p className="text-xs">
             Sign up to start reporting issues seamlessly. Provide substantial proof with photos and track your complaints efficiently.
           </p>
+          <p className="text-xs">version  2 . 0 . 0</p>
         </div>
 
         {/* Right Side - Register Form */}

@@ -18,6 +18,8 @@ const Login = () => {
         password,
       });
       console.log(response);
+      console.log(password);
+      
       
 
       if (response.status === 201) {
@@ -53,6 +55,7 @@ const Login = () => {
           <p className="text-xs">
             Experience a seamless way to report issues with our user-friendly platform. Upload photos and videos to provide substantial proof for your complaints and track their status effortlessly.
           </p>
+          <p className="text-xs">version  2 . 0 . 0</p>
         </div>
 
         {/* Right Side - Login Form */}
@@ -93,7 +96,7 @@ const Login = () => {
 
             {/* Forgot Password */}
             <div className="text-right">
-              <Link to="#" className="text-blue-500 text-sm">
+              <Link to="/forgot-password" className="text-blue-500 text-sm">
                 Forgot password?
               </Link>
             </div>

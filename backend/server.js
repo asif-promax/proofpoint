@@ -27,4 +27,7 @@ app.use("/dashboard",dashboard)
 const PORT = process.env.PORT || 5002;
 console.log(PORT);
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "Loaded" : "Not Loaded");
+
 app.listen(PORT, () => console.log("server is running"));

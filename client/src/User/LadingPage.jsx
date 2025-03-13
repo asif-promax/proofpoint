@@ -108,6 +108,21 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+      <section className="container border border-gray-400 rounded-lg mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-12">
+        <div className="md:w-1/2">
+          <img src={second} alt="About Violations" className="rounded-xl shadow-lg" />
+        </div>
+        <div className="md:w-1/2 space-y-6">
+          <h2 className="text-4xl font-bold">Understanding Violations</h2>
+          <p className="text-gray-700 text-lg">
+            Civic violations such as **illegal waste dumping, traffic infractions, and noise pollution** directly affect
+            community well-being. By reporting these issues, you help build a safer and cleaner society.
+          </p>
+          <p className="text-gray-600">
+            Our platform allows you to document and submit violations with real-time tracking, ensuring swift action.
+          </p>
+        </div>
+      </section>
 
       {/* Process Section */}
       <section className="container mx-auto px-6 py-20">

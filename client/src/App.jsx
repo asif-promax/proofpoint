@@ -15,6 +15,8 @@ import Dashboard from "./admin/Dashboard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminControl from "./admin/AdminControl";
+import ForgotPass from "./log-and-reg/ForgotPass";
+import ResetPass from "./log-and-reg/ResetPass";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -63,6 +65,8 @@ const App = () => {
         <Route path="/" element={<Login />} />
         <Route path="/reg" element={<Register />} />
         <Route path="/admin/adminControl" element={<AdminControl />} />
+        <Route path="/forgot-password" element={<ForgotPass />} />
+        <Route path="/reset-password/:token" element={<ResetPass />} />
 
         {/* User Routes - Protected */}
         <Route

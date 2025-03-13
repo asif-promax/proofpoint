@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -10,46 +9,49 @@ const AdminControl = () => {
     number: "",
     email: "",
     password: "",
-    role: "user", // Default role is 'user'
+    role: "user",
   });
 
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({}); // State for validation errors
 
   // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    // Live validation on input change
+    validateInput(e.target.name, e.target.value);
   };
 
   // Validation Function
-  const validateForm = () => {
-    const { number, password } = formData;
+  const validateInput = (field, value) => {
+    let errorMessages = { ...errors };
 
-    // Phone number validation: must be exactly 10 digits and numeric
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(number)) {
-      toast.error("Phone number must be exactly 10 digits.");
-      return false;
+    if (field === "number") {
+      const phoneRegex = /^[0-9]{10}$/;
+      errorMessages.number = phoneRegex.test(value)
+        ? ""
+        : "Phone number must be exactly 10 digits.";
     }
 
-    // Password validation: minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 digit, 1 special char
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      toast.error(
-        "Password must be at least 8 characters, include an uppercase letter, lowercase letter, number, and special character."
-      );
-      return false;
+    if (field === "password") {
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      errorMessages.password = passwordRegex.test(value)
+        ? ""
+        : "Password must have at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character.";
     }
 
-    return true;
+    setErrors(errorMessages);
   };
 
   // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form before submission
-    if (!validateForm()) return;
+    if (errors.number || errors.password) {
+      toast.error("Please fix the errors before submitting.");
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -71,76 +73,80 @@ const AdminControl = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-300 via-indigo-500 to-blue-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 via-blue-700 to-blue-900">
       <ToastContainer position="top-center" autoClose={2000} />
-      <div className="bg-white shadow-lg rounded-lg sm:w-2/6 py-3 px-7 flex flex-col justify-center">
-        <h1 className="text-4xl pb-4 text-center font-extrabold bg-gradient-to-br from-blue-900 to-blue-300 bg-clip-text text-transparent">
-          <span className="text-xs font-normal block text-black">
-            Create an account
-          </span>
-          Proofpoint
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-lg p-8">
+        <h1 className="text-3xl text-center font-extrabold bg-gradient-to-br from-blue-900 to-blue-400 bg-clip-text text-transparent">
+          ProofPoint
         </h1>
+        <p className="text-center text-gray-600 text-sm mb-4">Create an account</p>
 
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-semibold block">Name</label>
+          <div>
+            <label className="text-sm font-semibold block">Full Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your name"
+              placeholder="Name"
               required
             />
           </div>
 
           {/* Email Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-semibold block">Email</label>
+          <div>
+            <label className="text-sm font-semibold block">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your email"
+              placeholder="example@mail.com"
               required
             />
           </div>
 
           {/* Phone Number Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-semibold block">Phone Number</label>
+          <div>
+            <label className="text-sm font-semibold block">Phone Number</label>
             <input
               type="text"
               name="number"
               value={formData.number}
               onChange={handleChange}
-              className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your phone number"
+              className={`border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+                errors.number ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+              }`}
+              placeholder="Phone number"
               required
             />
+            {errors.number && <p className="text-red-500 text-xs mt-1">{errors.number}</p>}
           </div>
 
           {/* Password Field */}
-          <div className="space-y-1">
-            <label className="text-xs font-semibold block">Password</label>
+          <div>
+            <label className="text-sm font-semibold block">Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
+              className={`border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+                errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+              }`}
+              placeholder="••••••••"
               required
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
 
-          {/* Optional Admin Registration */}
-          <div className="space-y-1">
-            <label className="text-xs font-semibold block">Register as</label>
+          {/* Role Selection */}
+          <div>
+            <label className="text-sm font-semibold block">Register as</label>
             <select
               name="role"
               value={formData.role}
@@ -148,16 +154,15 @@ const AdminControl = () => {
               className="border-gray-300 border rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="user">User</option>
-              <option value="admin">Admin</option>{" "}
-              {/* Only allow for manual approval */}
+              <option value="admin">Admin</option>
             </select>
           </div>
 
           {/* Submit Button */}
-          <div className="space-y-1">
+          <div>
             <button
               type="submit"
-              className="text-white text-center bg-blue-600 w-full py-2 rounded-lg"
+              className="text-white bg-gradient-to-r from-blue-600 to-blue-400 w-full py-2 rounded-lg text-lg font-semibold hover:opacity-90 transition"
             >
               Sign Up
             </button>
