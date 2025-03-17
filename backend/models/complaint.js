@@ -9,12 +9,17 @@ const complaintSchema = new mongoose.Schema(
     date: { type: String, required: true },
     time: { type: String, required: true },
     proof: [{ type: String }], // Store multiple Cloudinary URLs
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference the User model
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    }, // Reference the User model
     status: {
       type: String,
       enum: ["pending", "solved", "rejected"],
       default: "pending",
-    }, 
+    },
   },
   { timestamps: true }
 );

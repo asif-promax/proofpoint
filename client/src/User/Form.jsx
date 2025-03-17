@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/complaint";
@@ -11,7 +13,7 @@ const Form = () => {
     district: "",
     date: "",
     time: "",
-    proof: null,
+    proof: [],
 
   });
   const [complaintModels, setComplaintModels] = useState([]);
@@ -32,22 +34,24 @@ const Form = () => {
 
   // Handle input change
   const handleChange = (event) => {
-    const { name, value, type, files } = event.target;
+    const { name, value, files } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "file" ? files[0] : value,
+      [name]: files ? [...files] : value, // Allow multiple file selection
     }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const formDataToSend = new FormData();
-    for (const key in formData) {
-      if (formData[key]) {
-        formDataToSend.append(key, formData[key]);
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === "proof" && value.length > 0) {
+        value.forEach((file) => formDataToSend.append("proof", file));
+      } else {
+        formDataToSend.append(key, value);
       }
-    }
+    });
   
     try {
       const response = await axios.post(
@@ -62,8 +66,9 @@ const Form = () => {
       );
   
       console.log("Response:", response.data);
-      alert("Complaint submitted successfully!");
-  
+toast.success("Registration successful! Redirecting...", {
+          autoClose: 2000,})
+          
       setFormData({
         model: "",
         complaintType: "",
@@ -81,6 +86,7 @@ const Form = () => {
 
   return (
     <div className="py-7 min-h-screen flex flex-col items-center  justify-center bg-gray-50 p-4">
+      <ToastContainer position="top-center" autoClose={2000} />
       <div className="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-md">
         <h1 className="text-2xl font-semibold text-center mb-4">
           Report Issues Seamlessly
@@ -219,6 +225,7 @@ const Form = () => {
                 name="proof"
                 onChange={handleChange}
                 accept="image/*, video/*"
+                multiple
                 className="block w-full px-3 py-2 rounded-lg"
               />
             </div>

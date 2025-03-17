@@ -12,7 +12,7 @@ const Register = () => {
     password: "",
     role: "user", // Default role is 'user'
   });
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Handle Input Change
@@ -50,6 +50,7 @@ const Register = () => {
 
     // Validate form before submission
     if (!validateForm()) return;
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -71,6 +72,8 @@ const Register = () => {
         error.response?.data?.msg || "Registration failed. Try again."
       );
       console.error(error.response?.data || "Error during registration");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,19 +84,25 @@ const Register = () => {
 
         {/* Left Side */}
         <div className="p-8 space-y-5 flex flex-col justify-center text-center sm:w-3/6 bg-gradient-to-t from-blue-900 to-blue-700 text-white">
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "'Sofia', sans-serif" }}>
+          <h1
+            className="text-3xl font-bold"
+            style={{ fontFamily: "'Sofia', sans-serif" }}
+          >
             Join Proofpoint
           </h1>
           <p className="text-xs">
-            Sign up to start reporting issues seamlessly. Provide substantial proof with photos and track your complaints efficiently.
+            Sign up to start reporting issues seamlessly. Provide substantial
+            proof with photos and track your complaints efficiently.
           </p>
-          <p className="text-xs">version  2 . 0 . 0</p>
+          <p className="text-xs">version 2 . 0 . 0</p>
         </div>
 
         {/* Right Side - Register Form */}
         <div className="sm:w-3/6 py-3 px-7 flex flex-col justify-center">
           <h1 className="text-4xl pb-4 text-center font-extrabold bg-gradient-to-br from-blue-900 to-blue-300 bg-clip-text text-transparent">
-            <span className="text-xs font-normal block text-black">Create an account</span>
+            <span className="text-xs font-normal block text-black">
+              Create an account
+            </span>
             Proofpoint
           </h1>
 
@@ -128,7 +137,9 @@ const Register = () => {
 
             {/* Phone Number Field */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold block">Phone Number</label>
+              <label className="text-xs font-semibold block">
+                Phone Number
+              </label>
               <input
                 type="text"
                 name="number"
@@ -156,8 +167,16 @@ const Register = () => {
 
             {/* Submit Button */}
             <div className="space-y-1">
-              <button type="submit" className="text-white text-center bg-blue-600 w-full py-2 rounded-lg">
-                Sign Up
+              <button
+                type="submit"
+                className="text-white bg-blue-600 w-full py-2 rounded-lg flex items-center justify-center"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+                ) : (
+                  "Register"
+                )}
               </button>
 
               <p className="text-center text-xs">

@@ -10,7 +10,7 @@ const router = express.Router();
 router.post(
   "/add",
   authMiddleware,
-  upload.single("proof"),
+  upload.array("proof",5),
   async (req, res) => {
     try {
       console.log("User date in request", req.user);
@@ -21,6 +21,8 @@ router.post(
         return res.status(400).json({ message: "Missing required fields" });
       }
 
+      const proofFiles = req.files?.map((file) => file.path) || [];
+
       const complaint = new ComplaintModel({
         model,
         complaintType,
@@ -28,7 +30,7 @@ router.post(
         district,
         date,
         time,
-        proof: req.file ? req.file.path : null, // Store Cloudinary URL
+        proof:proofFiles, // Store Cloudinary URL
         user: req.user.userId, // Attach logged-in user's ID
       });
 
@@ -45,8 +47,10 @@ router.post(
 
 router.get("/my-complaints", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.userId; // Extract user ID from token
-    const complaints = await ComplaintModel.find({ user: userId });
+    const complaints = await ComplaintModel.find({ user: req.user.userId })
+      .select("-__v")
+      .lean(); // Removes unnecessary Mongoose overhead
+
 
     res.status(200).json(complaints);
   } catch (error) {

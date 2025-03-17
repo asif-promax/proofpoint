@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/users", authMiddleware, async (req, res) => {
   try {
     console.log("Fetching users...");
-    const users = await User.find({}, "-password");
+    const users = await User.find({}, "-password").lean();
     console.log("Users found:", users);
     res.json(users);
   } catch (error) {

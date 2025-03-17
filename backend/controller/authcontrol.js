@@ -42,11 +42,8 @@ exports.login = async (req, res) => {
     console.log("Stored Password:", user.password);
     console.log("Typed Password:", password);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Manual Comparison Result:", isMatch);
-
-    if (!isMatch) {
-      return res.status(400).json({ msg: "password don't match" });
+    if (!(await bcrypt.compare(password, user.password))) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
     const token = jwt.sign(
       {
@@ -59,9 +56,6 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    if (!token) {
-      return res.json({ msg: "Token not found" });
-    }
     const role = user.role;
     return res.status(201).json({ msg: "login successfull", token, role });
   } catch (error) {

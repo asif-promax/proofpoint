@@ -7,10 +7,12 @@ import axios from "axios";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await axios.post("http://localhost:5000/auth/login", {
@@ -19,26 +21,21 @@ const Login = () => {
       });
       console.log(response);
       console.log(password);
-      
-      
 
       if (response.status === 201) {
-        const { token } = response.data;
-        const {role} =response.data
+        const { token, role } = response.data;
 
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
+        toast.success("Login successful!", { autoClose: 1500 });
 
-        
-          if (role === "admin") {
-            navigate("/admin"); // Redirect admin to admin dashboard
-          } else {
-            navigate("/landing"); // Redirect user to user dashboard
-          }
+        navigate(role === "admin" ? "/admin" : "/landing");
       }
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
       console.error(error.response?.data || "Login Error");
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -49,19 +46,26 @@ const Login = () => {
 
         {/* Left Side */}
         <div className="p-8 space-y-5 flex flex-col justify-center text-center sm:w-3/6 bg-gradient-to-t from-blue-900 to-blue-700 text-white">
-          <h1 className="text-3xl font-bold" style={{ fontFamily: "'Sofia', sans-serif" }}>
+          <h1
+            className="text-3xl font-bold"
+            style={{ fontFamily: "'Sofia', sans-serif" }}
+          >
             Proofpoint
           </h1>
           <p className="text-xs">
-            Experience a seamless way to report issues with our user-friendly platform. Upload photos and videos to provide substantial proof for your complaints and track their status effortlessly.
+            Experience a seamless way to report issues with our user-friendly
+            platform. Upload photos and videos to provide substantial proof for
+            your complaints and track their status effortlessly.
           </p>
-          <p className="text-xs">version  2 . 0 . 0</p>
+          <p className="text-xs">version 2 . 0 . 0</p>
         </div>
 
         {/* Right Side - Login Form */}
         <div className="sm:w-3/6 py-8 px-8 flex flex-col justify-center">
           <h1 className="text-4xl pb-4 text-center font-extrabold bg-gradient-to-br from-blue-900 to-blue-300 bg-clip-text text-transparent">
-            <span className="text-xs font-normal block text-black">Welcome to</span>
+            <span className="text-xs font-normal block text-black">
+              Welcome to
+            </span>
             Proofpoint
           </h1>
 
@@ -103,9 +107,17 @@ const Login = () => {
 
             {/* Submit Button */}
             <div className="space-y-3">
-              <button type="submit" className="text-white text-center bg-blue-600 w-full py-2 rounded-lg">
-                Login
-              </button>
+            <button
+              type="submit"
+              className="text-white bg-blue-600 w-full py-2 rounded-lg flex items-center justify-center"
+              disabled={loading} 
+            >
+              {loading ? (
+                <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+              ) : (
+                "Login"
+              )}
+            </button>
 
               <p className="text-center text-xs">
                 Don't have an account?{" "}
