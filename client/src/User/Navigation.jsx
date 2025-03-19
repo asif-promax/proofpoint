@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   FaBars,
   FaTimes,
@@ -9,23 +9,42 @@ import {
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navigation = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
+  const [isOpen, setIsOpen] = useState(false); // Profile dropdown state
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to get current location
+  const location = useLocation();
 
+  const dropdownRef = useRef(null); // Ref for profile dropdown
+  const mobileMenuRef = useRef(null); // Ref for mobile menu
+  const mobileDropdownRef = useRef(null);
   // Function to check if a path is active
-  const isActive = (path) => {
-    return location.pathname === path;
-  };
+  const isActive = (path) => location.pathname === path;
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token
     navigate("/"); // Redirect to login page
   };
+
+  // Handle clicks outside of profile dropdown & mobile menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        !dropdownRef.current?.contains(event.target) &&
+        !mobileDropdownRef.current?.contains(event.target) &&
+        !mobileMenuRef.current?.contains(event.target)
+      ) {
+        setIsOpen(false);
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -57,8 +76,8 @@ const Navigation = () => {
                   className={`px-3 py-1 rounded-lg ${
                     isActive("/landing")
                       ? "bg-blue-400 text-white"
-                      : "hover:text-blue-400 "
-                  } cursor-pointer  transition duration-300`}
+                      : "hover:text-blue-400"
+                  } cursor-pointer transition duration-300`}
                 >
                   Home
                 </p>
@@ -90,7 +109,7 @@ const Navigation = () => {
                   className={`hidden text-sm md:inline-block rounded-lg px-3 py-1.5 text-center ${
                     isActive("/landing/form")
                       ? "bg-blue-500 text-white"
-                      : "bg-gradient-to-r  from-blue-500 to-purple-500"
+                      : "bg-gradient-to-r from-blue-500 to-purple-500"
                   } hover:text-white transition duration-300`}
                 >
                   Complaint registration
@@ -98,8 +117,8 @@ const Navigation = () => {
               </Link>
             </div>
 
-            <div className="hidden lg:block">
-              {/* Profile Button */}
+            {/* Profile Dropdown */}
+            <div className="hidden lg:block" ref={dropdownRef}>
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg shadow hover:bg-gray-100 transition"
@@ -113,7 +132,6 @@ const Navigation = () => {
               {isOpen && (
                 <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <ul className="py-1">
-                    {/* Edit Profile */}
                     <li>
                       <Link
                         to="/landing/profile"
@@ -124,8 +142,6 @@ const Navigation = () => {
                         Edit Profile
                       </Link>
                     </li>
-
-                    {/* Log Out */}
                     <li>
                       <button
                         onClick={handleLogout}
@@ -143,99 +159,118 @@ const Navigation = () => {
 
           {/* Mobile Navigation (Dropdown Menu) */}
           {isMenuOpen && (
-            <div className="lg:hidden mt-4">
-              <div className="flex flex-col items-center gap-1">
+            <div
+              ref={mobileMenuRef}
+              className="absolute left-0 top-14 w-full bg-white shadow-lg border-t border-gray-200 lg:hidden transition-transform duration-300 ease-in-out"
+            >
+              <div className="flex flex-col mx-2 items-center gap-y-1 py-2">
+                {/* Home */}
                 <Link to="/landing" className="w-full" onClick={toggleMenu}>
                   <p
-                    className={`text-center w-full py-1 rounded-2xl ${
+                    className={`text-center w-full py-2 rounded-md ${
                       isActive("/landing")
-                        ? "bg-blue-400 text-white"
-                        : " border-blue-400"
-                    } cursor-pointer hover:bg-blue-400 hover:text-white transition duration-300`}
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-blue-100"
+                    } cursor-pointer transition duration-300`}
                   >
                     Home
                   </p>
                 </Link>
+
+                {/* My Complaints */}
                 <Link
                   to="/landing/complaint"
                   className="w-full"
                   onClick={toggleMenu}
                 >
                   <p
-                    className={`rounded-2xl cursor-pointer py-1 block w-full text-center transition duration-300 ${
+                    className={`text-center w-full py-2 rounded-md ${
                       isActive("/landing/complaint")
-                        ? "bg-blue-400 text-white"
-                        : "hover:bg-blue-400 hover:text-white"
-                    }`}
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-blue-100"
+                    } cursor-pointer transition duration-300`}
                   >
-                    My complaints
+                    My Complaints
                   </p>
                 </Link>
+
+                {/* About */}
                 <Link
                   to="/landing/about"
                   className="w-full"
                   onClick={toggleMenu}
                 >
                   <p
-                    className={`rounded-2xl cursor-pointer py-1 block w-full text-center transition duration-300 ${
+                    className={`text-center w-full py-2 rounded-md ${
                       isActive("/landing/about")
-                        ? "bg-blue-400 text-white"
-                        : "hover:bg-blue-400 hover:text-white"
-                    }`}
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-blue-100"
+                    } cursor-pointer transition duration-300`}
                   >
                     About
                   </p>
                 </Link>
-                <div className="w-full">
-                  {/* Profile Button */}
-                  <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full rounded-2xl flex items-center justify-center gap-2 py-1.5 text-sm font-medium hover:bg-gray-100 transition"
-                  >
-                    <FaUser className="text-md text-blue-500" />
-                    Profile
-                    <span className="text-xs">▼</span>
-                  </button>
 
-                  {/* Dropdown Menu */}
-                  {isOpen && (
-                    <div className=" mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
-                      <ul className="py-1">
-                        {/* Edit Profile */}
-                        <li>
-                          <Link
-                            to="/landing/profile"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            <FaUserEdit className="mr-2" />
-                            Edit Profile
-                          </Link>
-                        </li>
-
-                        {/* Log Out */}
-                        <li>
-                          <button
-                            onClick={handleLogout}
-                            className="flex w-full items-center px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white transition"
-                          >
-                            <FaSignOutAlt className="mr-2" />
-                            Log Out
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-                <Link to="/landing/form" onClick={toggleMenu}>
+                {/* Complaint Registration Button */}
+                <Link
+                  to="/landing/form"
+                  onClick={toggleMenu}
+                  className="flex justify-center w-full "
+                >
                   <button
-                    className={`rounded-lg px-3.5 py-2 text-center ${
-                      isActive("/landing/form") ? "bg-blue-500" : "bg-blue-400"
-                    } text-white hover:bg-blue-500 transition duration-300`}
+                    className="rounded-lg w-11/12 py-2 text-center bg-gradient-to-r from-blue-500 to-purple-500
+                     text-white hover:bg-blue-600 transition duration-300"
                   >
-                    Complaint registration
+                    Complaint Registration
                   </button>
                 </Link>
+
+                {/* Profile Dropdown Button */}
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="flex items-center justify-center gap-2 w-11/12 px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg shadow hover:bg-gray-100 transition"
+                >
+                  <FaUser className="text-md text-blue-500" />
+                  Profile
+                  <span className="text-xs">▼</span>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isOpen && (
+                  <div
+                    ref={mobileDropdownRef}
+                    className="w-11/12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 transition-all duration-300"
+                  >
+                    <ul className="py-1">
+                      <li>
+                        <Link
+                          to="/landing/profile"
+                          onClick={() => {
+                            setIsOpen(false);
+                            setIsMenuOpen(false);
+                          }}
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition"
+                        >
+                          <FaUserEdit className="mr-2" />
+                          Edit Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                            setIsMenuOpen(false);
+                          }}
+                          className="flex w-full items-center px-4 py-2 text-sm text-red-500 hover:bg-red-500 hover:text-white transition"
+                        >
+                          <FaSignOutAlt className="mr-2" />
+                          Log Out
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           )}
