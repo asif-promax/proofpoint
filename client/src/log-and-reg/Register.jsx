@@ -52,6 +52,7 @@ const Register = () => {
     if (!validateForm()) return;
     setLoading(true);
 
+    console.log("Registering with password:", formData.password);
     try {
       const response = await axios.post(
         "http://localhost:5000/auth/register",

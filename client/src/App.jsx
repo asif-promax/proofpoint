@@ -66,7 +66,7 @@ const App = () => {
         <Route path="/reg" element={<Register />} />
         <Route path="/admin/adminControl" element={<AdminControl />} />
         <Route path="/forgot-password" element={<ForgotPass />} />
-        <Route path="/reset-password/:token" element={<ResetPass />} />
+        <Route path="/reset-password" element={<ResetPass />} />
 
         {/* User Routes - Protected */}
         <Route

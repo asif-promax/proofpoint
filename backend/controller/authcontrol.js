@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 exports.register = async (req, res) => {
   try {
     const { name, number, email, password, role } = req.body;
+    console.log("Received password for registration:", password); // Add this
     if (!name || !email || !password || !number) {
       return res.status(400).json({ message: "data not found" });
     }
@@ -19,6 +20,7 @@ exports.register = async (req, res) => {
 
     const user = new User({ name, number, email, password, role });
     await user.save();
+    console.log("Saved user with hashed password:", user.password); // Add this
 
     return res.status(201).json({ message: "registered succesfull" });
   } catch (error) {
@@ -28,21 +30,25 @@ exports.register = async (req, res) => {
       .json({ message: "server error", error: error.message });
   }
 };
-
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) {
       return res.status(400).json({ message: "data not found" });
     }
+    console.log("Login attempt with email:", email);
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found for email:", email);
       return res.status(400).json({ msg: "invalid " });
     }
-    console.log("Stored Password:", user.password);
-    console.log("Typed Password:", password);
+    console.log("Stored Password (hashed):", user.password);
+    console.log("Typed Password (plain):", password);
 
-    if (!(await bcrypt.compare(password, user.password))) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match result:", isMatch);
+
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
     const token = jwt.sign(
@@ -51,7 +57,6 @@ exports.login = async (req, res) => {
         userName: user.name,
         userEmail: user.email,
         userNumber: user.number,
-        // role: user.role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -64,7 +69,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// ✅ Forgot Password
+// Forgot Password
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -78,14 +83,15 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a secure reset token
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    user.resetToken = resetToken;
-    user.resetTokenExpiration = Date.now() + 3600000; // Token valid for 1 hour
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.resetOtp = otp;
+    user.otpExpiration = Date.now() + 10 * 60 * 1000; // 10 minutes expiration
     await user.save();
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
+    console.log("Generated OTP:", otp, "for email:", email); // Debugging
 
+    // Email transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -94,61 +100,57 @@ exports.forgotPassword = async (req, res) => {
       },
     });
 
-    // ✅ Verify transporter before sending mail
-    transporter.verify((err, success) => {
-      if (err) {
-        console.error("Nodemailer Error:", err);
-      } else {
-        console.log("Nodemailer is ready to send emails");
-      }
-    });
-
-    await transporter.sendMail({
+    // Send OTP email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
       to: user.email,
-      subject: "Password Reset Request",
-      html: `<p>You requested a password reset. Click the link below to reset your password.</p>
-             <a href="${resetUrl}">${resetUrl}</a>
-             <p>This link is valid for 1 hour.</p>`,
-    });
+      subject: "Password Reset OTP",
+      html: `<p>Your OTP for password reset is:</p>
+             <h2>${otp}</h2>
+             <p>This OTP is valid for 10 minutes.</p>`,
+    };
 
-    return res
-      .status(200)
-      .json({ message: "Password reset link sent to your email" });
+    await transporter.sendMail(mailOptions);
+    console.log("OTP email sent to:", user.email); // Debugging
+    return res.status(200).json({ message: "OTP sent to your email" });
   } catch (error) {
     console.error("Forgot Password Error:", error);
-    return res.status(500).json({ message: "Server error" });
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
   }
 };
 
-// ✅ Reset Password
+// In controller/authcontrol.js
 exports.resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { email, otp, newPassword } = req.body;
 
-    if (!token || !newPassword) {
-      return res.status(400).json({ message: "Invalid request" });
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ message: "Email, OTP, and new password are required" });
     }
 
     const user = await User.findOne({
-      resetToken: token,
-      resetTokenExpiration: { $gt: Date.now() },
+      email,
+      resetOtp: otp,
+      otpExpiration: { $gt: Date.now() },
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    console.log("New Password Before Hashing:", newPassword);
+    user.password = newPassword
+    console.log("New hashed password:", user.password); // Debugging
 
-    user.password = newPassword;
-    user.resetToken = undefined;
-    user.resetTokenExpiration = undefined;
+    // Clear OTP fields
+    user.resetOtp = undefined;
+    user.otpExpiration = undefined;
     await user.save();
-    console.log("hashed password after saving", user.password);
 
     return res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
     console.error("Reset Password Error:", error);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
