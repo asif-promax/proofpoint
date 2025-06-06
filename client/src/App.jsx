@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./log-and-reg/Login";
 import Register from "./log-and-reg/Register";
-import LandingPage from "./User/LadingPage"; // Fixed typo
+import LandingPage from "./User/LandingPage"; // Fixed typo
 import Navigation from "./User/Navigation";
 import MyComplaints from "./User/Mycomplaints"; // Fixed naming style
 import About from "./User/About";

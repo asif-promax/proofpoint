@@ -1,14 +1,14 @@
 const express = require("express");
-const { connectDB } = require("./connect/db");
+const { connectDB } = require("./config/db");
 require("dotenv").config();
 const routes = require("./routes/routes");
-const authRoutes = require("./controller/authRoutes");
+const authRoutes = require("./controllers/authRoutes");
 const cors = require("cors");
-const complaintControls = require("./controller/complaintControls");
-const complaintForm = require("./controller/complaintRoutes");
-const complaintAdmin = require("./controller/complaintAdmin");
-const updateUsers = require("./controller/updateUser");
-const dashboard=require("./controller/dashboard")
+const complaintControls = require("./controllers/complaintControls");
+const complaintForm = require("./controllers/complaintRoutes");
+const complaintAdmin = require("./controllers/complaintAdmin");
+const updateUsers = require("./controllers/updateUser");
+const dashboard=require("./controllers/dashboard")
 
 const app = express();
 
